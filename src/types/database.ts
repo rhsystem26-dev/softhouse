@@ -9,18 +9,21 @@ export interface Database {
           name: string;
           slug: string;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
           name: string;
           slug: string;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
           name?: string;
           slug?: string;
           created_at?: string;
+          updated_at?: string;
         };
       };
       organization_members: {
@@ -53,6 +56,7 @@ export interface Database {
           full_name: string;
           avatar_url: string | null;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -60,6 +64,7 @@ export interface Database {
           full_name: string;
           avatar_url?: string | null;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -67,6 +72,7 @@ export interface Database {
           full_name?: string;
           avatar_url?: string | null;
           created_at?: string;
+          updated_at?: string;
         };
       };
       audit_logs: {
