@@ -17,7 +17,9 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-const Form = FormProvider;
+function Form({ ...props }: ComponentProps<typeof FormProvider>) {
+  return <FormProvider data-slot="form" {...props} />;
+}
 
 interface FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -33,9 +35,11 @@ function FormField<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({ ...props }: ControllerProps<TFieldValues, TName>) {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
-    </FormFieldContext.Provider>
+    <span data-slot="form-field">
+      <FormFieldContext.Provider value={{ name: props.name }}>
+        <Controller {...props} />
+      </FormFieldContext.Provider>
+    </span>
   );
 }
 
@@ -58,6 +62,7 @@ function FormLabel({ className, children, ...props }: ComponentProps<typeof Labe
   const { error } = useFormField();
   return (
     <Label
+      data-slot="form-label"
       className={cn(error && "text-rose-400", className)}
       {...props}
     >
@@ -67,7 +72,7 @@ function FormLabel({ className, children, ...props }: ComponentProps<typeof Labe
 }
 
 function FormControl({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return <div data-slot="form-control">{children}</div>;
 }
 
 function FormMessage({ className, children }: { className?: string; children?: ReactNode }) {

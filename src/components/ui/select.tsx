@@ -6,7 +6,7 @@ import { type ComponentProps } from "react";
 
 export function Select({ className, children, ...props }: ComponentProps<typeof BaseSelect.Root> & { className?: string }) {
   return (
-    <div className={className}>
+    <div data-slot="select" className={className}>
       <BaseSelect.Root {...props}>{children}</BaseSelect.Root>
     </div>
   );
@@ -15,6 +15,7 @@ export function Select({ className, children, ...props }: ComponentProps<typeof 
 export function SelectTrigger({ className, children, ...props }: ComponentProps<typeof BaseSelect.Trigger>) {
   return (
     <BaseSelect.Trigger
+      data-slot="select-trigger"
       className={cn(
         "flex h-9 w-full items-center justify-between rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-50",
         className
@@ -28,12 +29,13 @@ export function SelectTrigger({ className, children, ...props }: ComponentProps<
 }
 
 export function SelectValue({ className, ...props }: ComponentProps<typeof BaseSelect.Value>) {
-  return <BaseSelect.Value className={cn("text-sm", className)} {...props} />;
+  return <BaseSelect.Value data-slot="select-value" className={cn("text-sm", className)} {...props} />;
 }
 
 export function SelectPopover({ className, children, ...props }: ComponentProps<typeof BaseSelect.Popup>) {
   return (
     <BaseSelect.Popup
+      data-slot="select-popover"
       className={cn("z-50 rounded-md border border-slate-800 bg-slate-900 shadow-lg", className)}
       {...props}
     >
@@ -45,6 +47,7 @@ export function SelectPopover({ className, children, ...props }: ComponentProps<
 export function SelectItem({ className, children, ...props }: ComponentProps<typeof BaseSelect.Item>) {
   return (
     <BaseSelect.Item
+      data-slot="select-item"
       className={cn(
         "flex cursor-pointer items-center px-3 py-2 text-sm text-slate-200 outline-none hover:bg-slate-800 data-[highlighted]:bg-slate-800",
         className
