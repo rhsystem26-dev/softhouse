@@ -34,7 +34,7 @@ export function CommandList({ className, ...props }: ComponentProps<typeof BaseC
 }
 
 export function CommandEmpty({ className, ...props }: ComponentProps<typeof BaseCommand.Empty>) {
-  return <BaseCommand.Empty data-slot="command-empty" className={cn("py-6 text-center text-sm text-slate-400", className)} {...props} />;
+  return <BaseCommand.Empty data-slot="command-empty" aria-live="polite" className={cn("py-6 text-center text-sm text-slate-400", className)} {...props} />;
 }
 
 export function CommandGroup({ className, ...props }: ComponentProps<typeof BaseCommand.Group>) {

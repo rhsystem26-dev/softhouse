@@ -5,13 +5,13 @@ import { X } from "lucide-react";
 import { type ComponentProps, type HTMLAttributes } from "react";
 
 export function Dialog({ ...props }: ComponentProps<typeof BaseDialog.Root>) {
-  return <span data-slot="dialog"><BaseDialog.Root {...props} /></span>;
+  return <BaseDialog.Root {...props} />;
 }
 export function DialogTrigger({ className, ...props }: ComponentProps<typeof BaseDialog.Trigger>) {
   return <BaseDialog.Trigger data-slot="dialog-trigger" className={cn(className)} {...props} />;
 }
 export function DialogPortal({ ...props }: ComponentProps<typeof BaseDialog.Portal>) {
-  return <span data-slot="dialog-portal"><BaseDialog.Portal {...props} /></span>;
+  return <BaseDialog.Portal {...props} />;
 }
 export function DialogOverlay({ className, ...props }: ComponentProps<typeof BaseDialog.Backdrop>) {
   return (

@@ -4,7 +4,7 @@ import { Popover as BasePopover } from "@base-ui/react/popover";
 import { type ComponentProps } from "react";
 
 export function Popover({ ...props }: ComponentProps<typeof BasePopover.Root>) {
-  return <span data-slot="popover"><BasePopover.Root {...props} /></span>;
+  return <BasePopover.Root {...props} />;
 }
 export function PopoverTrigger({ className, ...props }: ComponentProps<typeof BasePopover.Trigger>) {
   return <BasePopover.Trigger data-slot="popover-trigger" className={cn(className)} {...props} />;

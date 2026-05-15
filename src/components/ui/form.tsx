@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import {
   createContext,
   useContext,
-  useId,
   type ComponentProps,
   type ReactNode,
 } from "react";
@@ -50,7 +49,6 @@ function useFormField() {
 }
 
 function FormItem({ className, children }: { className?: string; children: ReactNode }) {
-  const id = useId();
   return (
     <div className={cn("space-y-2", className)} data-slot="form-item">
       {children}
@@ -78,7 +76,7 @@ function FormControl({ children }: { children: ReactNode }) {
 function FormMessage({ className, children }: { className?: string; children?: ReactNode }) {
   const { error } = useFormField();
   const body = error ? String(error?.message ?? "") : children;
-  if (!body) return null;
+  if (!body || body === "") return null;
   return (
     <p className={cn("text-sm text-rose-400", className)} data-slot="form-message">
       {body}
@@ -86,4 +84,4 @@ function FormMessage({ className, children }: { className?: string; children?: R
   );
 }
 
-export { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, useFormField, useFormContext as useForm };
+export { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, useFormField, useFormContext };
