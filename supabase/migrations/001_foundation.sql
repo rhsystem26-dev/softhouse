@@ -30,7 +30,81 @@ end;
 $$;
 
 -- ============================================================
+-- TABELA: organizations
+-- ============================================================
+create table organizations (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create trigger trg_organizations_updated_at
+  before update on organizations
+  for each row execute function update_updated_at();
+
+alter table organizations enable row level security;
+
+-- ============================================================
+-- TABELA: profiles
+-- ============================================================
+create table profiles (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique references auth.users(id) on delete cascade,
+  full_name text not null,
+  avatar_url text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create trigger trg_profiles_updated_at
+  before update on profiles
+  for each row execute function update_updated_at();
+
+alter table profiles enable row level security;
+
+-- Trigger: Criar profile automaticamente ao criar usuário
+create or replace function handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (user_id, full_name)
+  values (
+    new.id,
+    coalesce(
+      new.raw_user_meta_data ->> 'full_name',
+      split_part(new.email, '@', 1)
+    )
+  );
+  return new;
+end;
+$$;
+
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function handle_new_user();
+
+-- ============================================================
+-- TABELA: organization_members
+-- ============================================================
+create table organization_members (
+  id uuid primary key default gen_random_uuid(),
+  org_id uuid not null references organizations(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  role user_role not null default 'dev',
+  joined_at timestamptz not null default now(),
+  unique(org_id, user_id)
+);
+
+alter table organization_members enable row level security;
+
+-- ============================================================
 -- FUNÇÕES AUXILIARES DE RLS (SECURITY DEFINER + search_path seguro)
+-- Precisam vir DEPOIS da criação das tabelas que referenciam
 -- ============================================================
 
 -- Retorna o org_id do usuário autenticado
@@ -111,21 +185,8 @@ as $$
 $$;
 
 -- ============================================================
--- TABELA: organizations
+-- POLICIES: organizations
 -- ============================================================
-create table organizations (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  slug text not null unique,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create trigger trg_organizations_updated_at
-  before update on organizations
-  for each row execute function update_updated_at();
-
-alter table organizations enable row level security;
 
 -- Membros podem ver a própria organização
 create policy "Membros veem a propria organizacao"
@@ -142,26 +203,9 @@ create policy "Admin cria organizacao"
   on organizations for insert
   with check (has_role('admin'));
 
--- Ninguém pode deletar organização (proteção contra acidentes)
--- Se necessário, fazer manualmente via SQL Editor com service_role
-
 -- ============================================================
--- TABELA: profiles
+-- POLICIES: profiles
 -- ============================================================
-create table profiles (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null unique references auth.users(id) on delete cascade,
-  full_name text not null,
-  avatar_url text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create trigger trg_profiles_updated_at
-  before update on profiles
-  for each row execute function update_updated_at();
-
-alter table profiles enable row level security;
 
 -- Usuário vê o próprio perfil
 create policy "Usuario ve o proprio perfil"
@@ -169,7 +213,6 @@ create policy "Usuario ve o proprio perfil"
   using (user_id = auth.uid());
 
 -- Admin e Sócio veem perfis de membros da mesma organização
--- Via join: profiles.user_id está em organization_members na mesma org que o viewer
 create policy "Admin e Socio veem perfis da org"
   on profiles for select
   using (
@@ -201,47 +244,9 @@ create policy "Admin e Socio inserem perfil"
     or user_id = auth.uid()
   );
 
--- Ninguém pode deletar perfil diretamente (cascade do auth.users)
-
 -- ============================================================
--- TRIGGER: Criar profile automaticamente ao criar usuário
+-- POLICIES: organization_members
 -- ============================================================
-create or replace function handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  insert into public.profiles (user_id, full_name)
-  values (
-    new.id,
-    coalesce(
-      new.raw_user_meta_data ->> 'full_name',
-      split_part(new.email, '@', 1)
-    )
-  );
-  return new;
-end;
-$$;
-
-create or replace trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function handle_new_user();
-
--- ============================================================
--- TABELA: organization_members
--- ============================================================
-create table organization_members (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references organizations(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  role user_role not null default 'dev',
-  joined_at timestamptz not null default now(),
-  unique(org_id, user_id)
-);
-
-alter table organization_members enable row level security;
 
 -- Membros podem ver outros membros da mesma organização
 create policy "Membros veem membros da mesma org"
@@ -284,9 +289,6 @@ create policy "Admin e Socio veem audit logs"
   on audit_logs for select
   using (is_admin_or_socio(org_id));
 
--- Audit logs são inseridos apenas por triggers/funções internas
--- Nenhuma policy de INSERT pública — apenas service_role ou SECURITY DEFINER
-
 -- ============================================================
 -- FUNÇÃO: audit_trigger (genérica, para uso futuro nas fases 2+)
 -- ============================================================
@@ -309,7 +311,7 @@ begin
     _org_id := new.org_id;
   end if;
 
-  -- Se não tem org_id direto, tenta via project_id (guarda: projects pode não existir na Fase 1)
+  -- Se não tem org_id direto, tenta via project_id
   if _org_id is null and TG_OP != 'DELETE' then
     if new ? 'project_id' and (new->>'project_id') is not null then
       if exists (
