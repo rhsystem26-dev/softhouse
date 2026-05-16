@@ -372,6 +372,79 @@ export interface Database {
           created_at?: string;
         };
       };
+      time_entries: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          user_id: string;
+          hours: number;
+          description: string | null;
+          date: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          user_id: string;
+          hours: number;
+          description?: string | null;
+          date?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          user_id?: string;
+          hours?: number;
+          description?: string | null;
+          date?: string;
+          created_at?: string;
+        };
+      };
+      deliveries: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          title: string;
+          description: string | null;
+          status: "backlog" | "in_progress" | "review" | "done" | "blocked";
+          due_date: string | null;
+          completed_at: string | null;
+          assignee_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          title: string;
+          description?: string | null;
+          status?: "backlog" | "in_progress" | "review" | "done" | "blocked";
+          due_date?: string | null;
+          completed_at?: string | null;
+          assignee_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          title?: string;
+          description?: string | null;
+          status?: "backlog" | "in_progress" | "review" | "done" | "blocked";
+          due_date?: string | null;
+          completed_at?: string | null;
+          assignee_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {};
     Functions: {
@@ -406,6 +479,7 @@ export interface Database {
       revenue_type: "servico" | "consultoria" | "produto" | "retainer" | "outro";
       cost_category: "ia" | "infra" | "pessoal" | "outros";
       ai_usage_result: "accepted" | "rejected" | "modified";
+      delivery_status: "backlog" | "in_progress" | "review" | "done" | "blocked";
     };
   };
 }
@@ -430,3 +504,6 @@ export type Revenue = Database["public"]["Tables"]["revenues"]["Row"];
 export type Cost = Database["public"]["Tables"]["costs"]["Row"];
 export type RevenueType = Database["public"]["Enums"]["revenue_type"];
 export type CostCategory = Database["public"]["Enums"]["cost_category"];
+export type TimeEntry = Database["public"]["Tables"]["time_entries"]["Row"];
+export type Delivery = Database["public"]["Tables"]["deliveries"]["Row"];
+export type DeliveryStatus = Database["public"]["Enums"]["delivery_status"];

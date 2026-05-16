@@ -30,11 +30,18 @@ export default async function ProjetoDetailPage({ params }: Props) {
     .select("id, user_id, role, assigned_at")
     .eq("project_id", id);
 
+  const [{ data: timeEntries }, { data: deliveries }] = await Promise.all([
+    supabase.from("time_entries").select("*").eq("project_id", id).order("date", { ascending: false }),
+    supabase.from("deliveries").select("*").eq("project_id", id).order("due_date", { ascending: true, nullsFirst: false }),
+  ]);
+
   return (
     <ProjetoDetailView
       project={project}
       client={client}
       members={members ?? []}
+      timeEntries={timeEntries ?? []}
+      deliveries={deliveries ?? []}
     />
   );
 }
