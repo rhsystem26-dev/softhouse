@@ -26,16 +26,17 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  const publicPaths = ["/login", "/criar-conta", "/esqueceu-senha", "/redefinir-senha"];
 
-  // Usuário não autenticado → redireciona para /login
-  if (!user && pathname !== "/login") {
+  // Usuário não autenticado → redireciona para /login (exceto rotas públicas)
+  if (!user && !publicPaths.includes(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Usuário autenticado tentando acessar /login → redireciona para /app/dashboard
-  if (user && pathname === "/login") {
+  // Usuário autenticado tentando acessar página pública → redireciona para /app/dashboard
+  if (user && publicPaths.includes(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/app/dashboard";
     return NextResponse.redirect(url);
