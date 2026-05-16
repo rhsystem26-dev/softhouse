@@ -201,6 +201,17 @@ create policy "Gerente remove members dos seus projetos"
     )
   );
 
+create policy "Gerente edita members nos seus projetos"
+  on project_members for update
+  using (
+    exists (
+      select 1 from public.project_members pm
+      where pm.project_id = project_members.project_id
+      and pm.user_id = auth.uid()
+      and pm.role = 'gerente'
+    )
+  );
+
 -- ============================================================
 -- AUDIT TRIGGERS
 -- ============================================================
