@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const supabase = createClient();
+  const router = useRouter();
 
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -33,7 +35,7 @@ export default function LoginPage() {
           : error.message
       );
     } else {
-      window.location.href = "/app/dashboard";
+      router.push("/app/dashboard");
     }
     setLoading(false);
   }
@@ -104,9 +106,11 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex rounded-lg bg-slate-800 p-1">
+            <div role="tablist" aria-label="Método de login" className="flex rounded-lg bg-slate-800 p-1">
               <button
                 type="button"
+                role="tab"
+                aria-selected={mode === "password"}
                 onClick={() => { setMode("password"); setError(null); }}
                 className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${
                   mode === "password" ? "bg-slate-700 text-slate-100" : "text-slate-400 hover:text-slate-300"
@@ -117,6 +121,8 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={mode === "magic"}
                 onClick={() => { setMode("magic"); setError(null); }}
                 className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${
                   mode === "magic" ? "bg-slate-700 text-slate-100" : "text-slate-400 hover:text-slate-300"

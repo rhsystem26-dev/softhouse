@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
 import { useMemo } from "react";
 import type { Revenue, Cost } from "@/types/database";
@@ -57,15 +57,29 @@ export function FinanceiroChart({ revenues, costs }: { revenues: Revenue[]; cost
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+          <AreaChart data={chartData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+            <defs>
+              <linearGradient id="gradReceita" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="gradCusto" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#64748b" stopOpacity={0.10} />
+                <stop offset="95%" stopColor="#64748b" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
             <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 12 }} axisLine={{ stroke: "#1e293b" }} tickLine={false} />
             <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} axisLine={{ stroke: "#1e293b" }} tickLine={false} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
-            <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #1e293b", borderRadius: "8px", fontSize: "13px" }} labelStyle={{ color: "#e2e8f0" }} formatter={(value) => [fmtCurrency(Number(value) || 0), ""]} />
+            <Tooltip
+              contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #1e293b", borderRadius: "8px", fontSize: "13px" }}
+              labelStyle={{ color: "#e2e8f0" }}
+              formatter={(value) => [fmtCurrency(Number(value) || 0), ""]}
+            />
             <Legend wrapperStyle={{ fontSize: "12px" }} />
-            <Bar dataKey="receita" name="Receita" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={32} />
-            <Bar dataKey="custo" name="Custo" fill="#f43f5e" radius={[4, 4, 0, 0]} maxBarSize={32} />
-          </BarChart>
+            <Area dataKey="receita" name="Receita" stroke="#10b981" fill="url(#gradReceita)" strokeWidth={2} />
+            <Area dataKey="custo" name="Custo" stroke="#64748b" fill="url(#gradCusto)" strokeWidth={2} strokeDasharray="4 4" />
+          </AreaChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

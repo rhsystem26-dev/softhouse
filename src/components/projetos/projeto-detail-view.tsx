@@ -19,7 +19,7 @@ import type { Project, Client, TimeEntry, Delivery } from "@/types/database";
 
 const statusLabels: Record<string, string> = {
   active: "Ativo",
-  completed: "Concluido",
+  completed: "Concluído",
   on_hold: "Pausado",
   cancelled: "Cancelado",
 };
@@ -32,13 +32,13 @@ const statusVariants: Record<string, "success" | "info" | "warning" | "danger"> 
 };
 
 const sections: DetailSection[] = [
-  { id: "overview", label: "Visao Geral", icon: Building2 },
+  { id: "overview", label: "Visão Geral", icon: Building2 },
   { id: "financeiro", label: "Financeiro", icon: DollarSign },
   { id: "ia-tokens", label: "IAs e Tokens", icon: Cpu },
   { id: "tempo", label: "Tempo", icon: Clock },
   { id: "entregas", label: "Entregas", icon: CheckSquare },
   { id: "infraestrutura", label: "Infraestrutura", icon: Server },
-  { id: "historico", label: "Historico", icon: FileText },
+  { id: "historico", label: "Histórico", icon: FileText },
 ];
 
 interface ProjetoMember {
@@ -75,13 +75,13 @@ export function ProjetoDetailView({
     d ? new Date(d + "T00:00:00").toLocaleDateString("pt-BR") : "-";
 
   return (
-    <div className="flex gap-0 -m-6 lg:-m-8 min-h-[calc(100vh-3.5rem)]">
+    <div className="flex flex-col lg:flex-row gap-0 -m-6 lg:-m-8 min-h-[calc(100vh-3.5rem)]">
       <ProjetoLocalSidebar
         sections={sections}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 p-4 lg:p-8 overflow-y-auto">
         {/* Header do projeto */}
         <div className="mb-8">
           <div className="flex items-start justify-between">
@@ -104,7 +104,7 @@ export function ProjetoDetailView({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
             <Card className="bg-slate-900 border-slate-800/60">
               <CardContent className="p-4">
-                <p className="text-xs text-slate-400">Orcamento</p>
+                <p className="text-xs text-slate-400">Orçamento</p>
                 <p className="text-lg font-bold text-slate-100 font-mono mt-0.5">
                   {fmtCurrency(project.budget)}
                 </p>
@@ -146,7 +146,7 @@ export function ProjetoDetailView({
             <Card className="bg-slate-900 border-slate-800/60">
               <CardHeader>
                 <CardTitle className="text-base text-slate-200">
-                  Visao Geral
+                  Visão Geral
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -156,7 +156,7 @@ export function ProjetoDetailView({
                   </p>
                 ) : (
                   <p className="text-slate-600 italic">
-                    Nenhuma descricao fornecida.
+                    Nenhuma descrição fornecida.
                   </p>
                 )}
               </CardContent>
@@ -167,6 +167,7 @@ export function ProjetoDetailView({
             <div className="space-y-4">
               {timeEntries.length === 0 ? (
                 <p className="text-slate-500 text-center py-8">Nenhuma hora lançada neste projeto.</p>
+
               ) : (
                 <Table>
                   <TableHeader>
@@ -227,10 +228,10 @@ export function ProjetoDetailView({
                 <Clock className="w-6 h-6 text-slate-600" />
               </div>
               <h3 className="text-lg font-medium text-slate-300 mb-2">
-                Disponivel em fase futura
+                Disponível em fase futura
               </h3>
               <p className="text-sm text-slate-500 max-w-md">
-                Esta secao estara disponivel nas proximas fases do sistema.
+                Esta seção estará disponível nas próximas fases do sistema.
               </p>
             </div>
           )}

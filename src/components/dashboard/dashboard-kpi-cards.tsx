@@ -21,6 +21,7 @@ export function DashboardKPICards({ metrics }: { metrics: Metrics | null }) {
       sub: "Total em projetos ativos",
       icon: DollarSign,
       color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
     },
     {
       label: "Projetos Ativos",
@@ -28,6 +29,7 @@ export function DashboardKPICards({ metrics }: { metrics: Metrics | null }) {
       sub: `${metrics?.projects_completed ?? 0} concluídos`,
       icon: FolderKanban,
       color: "text-indigo-400",
+      bg: "bg-indigo-500/10",
     },
     {
       label: "Membros",
@@ -35,6 +37,7 @@ export function DashboardKPICards({ metrics }: { metrics: Metrics | null }) {
       sub: "Na organização",
       icon: Users,
       color: "text-sky-400",
+      bg: "bg-sky-500/10",
     },
     {
       label: "Total Projetos",
@@ -42,6 +45,7 @@ export function DashboardKPICards({ metrics }: { metrics: Metrics | null }) {
       sub: `${metrics?.projects_on_hold ?? 0} pausados`,
       icon: CheckCircle,
       color: "text-amber-400",
+      bg: "bg-amber-500/10",
     },
   ];
 
@@ -51,7 +55,9 @@ export function DashboardKPICards({ metrics }: { metrics: Metrics | null }) {
         <Card key={c.label} className="bg-slate-900 border-slate-800/60">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
-              <c.icon className={`w-4 h-4 ${c.color}`} />
+              <div className={`w-7 h-7 rounded-md ${c.bg} flex items-center justify-center shrink-0`}>
+                <c.icon className={`w-3.5 h-3.5 ${c.color}`} />
+              </div>
               {c.label}
             </CardTitle>
           </CardHeader>

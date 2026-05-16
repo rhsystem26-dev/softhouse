@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(skill-router)",
+      "Skill(skill-router:*)",
+      "Skill(premium-tech-design-system)",
+      "Skill(premium-tech-design-system:*)",
+      "Skill(dashboard-ux-architect)",
+      "Skill(dashboard-ux-architect:*)",
+      "Skill(data-viz-finance-ai)",
+      "Skill(data-viz-finance-ai:*)",
+      "Skill(responsive-polish-review)",
+      "Skill(responsive-polish-review:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:writing-plans:*)",
+      "Skill(superpowers:executing-plans)",
+      "Skill(superpowers:executing-plans:*)",
+      "Bash(rtk tsc *)",
+      "Bash(rtk git *)"
+    ]
+  }
+}

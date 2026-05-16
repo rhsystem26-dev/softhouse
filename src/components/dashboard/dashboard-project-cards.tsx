@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ExternalLink, FolderKanban, Calendar } from "lucide-react";
 
 interface ActiveProject {
@@ -49,10 +50,12 @@ export function DashboardProjectCards({ projects }: { projects: ActiveProject[] 
         </div>
 
         {projects.length === 0 ? (
-          <div className="flex flex-col items-center py-6 text-center">
-            <FolderKanban className="w-8 h-8 text-slate-600 mb-2" />
-            <p className="text-xs text-slate-500">Nenhum projeto ativo.</p>
-          </div>
+          <EmptyState
+            icon={FolderKanban}
+            title="Nenhum projeto ativo"
+            description="Crie um projeto para começar a acompanhar métricas."
+            className="py-6"
+          />
         ) : (
           <div className="space-y-2">
             {projects.slice(0, 5).map((p) => (

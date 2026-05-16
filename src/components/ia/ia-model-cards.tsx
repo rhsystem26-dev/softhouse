@@ -1,6 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Cpu } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { AiUsage, AiModel } from "@/types/database";
+
+const MODEL_COLORS: Record<string, string> = {
+  "GPT-4o": "#10b981",
+  "GPT-4": "#10b981",
+  "GPT-3.5": "#34d399",
+  "Claude Opus": "#6366f1",
+  "Claude Sonnet": "#0ea5e9",
+  "Claude Haiku": "#818cf8",
+  "Gemini Pro": "#f59e0b",
+  "Gemini Flash": "#fbbf24",
+};
+
+function getModelColor(name: string): string {
+  for (const [key, color] of Object.entries(MODEL_COLORS)) {
+    if (name.includes(key)) return color;
+  }
+  return "#475569";
+}
 
 interface ModelStats {
   modelId: string;
@@ -59,11 +79,12 @@ export function IAModelCards({ usage, models }: { usage: AiUsage[]; models: AiMo
   if (stats.length === 0) {
     return (
       <Card className="bg-slate-900 border-slate-800/60">
-        <CardHeader>
-          <CardTitle className="text-base text-slate-200">Modelos</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-center py-8">
-          <p className="text-sm text-slate-500">Nenhum modelo cadastrado.</p>
+        <CardContent className="p-0">
+          <EmptyState
+            icon={Cpu}
+            title="Nenhum modelo cadastrado"
+            description="Registre uso de IAs para visualizar métricas de performance por modelo."
+          />
         </CardContent>
       </Card>
     );
@@ -71,46 +92,81 @@ export function IAModelCards({ usage, models }: { usage: AiUsage[]; models: AiMo
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {stats.map((s) => (
-        <Card key={s.modelId} className="bg-slate-900 border-slate-800/60">
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-slate-200">{s.modelName}</CardTitle>
-              <Badge variant="info" className="text-xs">{s.providerName}</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <p className="text-slate-500">Tokens In</p>
-                <p className="font-mono text-slate-200">{fmtTokens(s.totalTokensIn)}</p>
+      {stats.map((s) => {
+        const accentColor = getModelColor(s.modelName);
+        return (
+          <Card key={s.modelId} className="bg-slate-900 border-slate-800/60 overflow-hidden">
+            <div className="h-0.5" style={{ backgroundColor: accentColor }} />
+            <CardHeader className="pb-2 pt-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-slate-200">{s.modelName}</CardTitle>
+                <Badge variant="outline" className="text-xs">{s.providerName}</Badge>
               </div>
-              <div>
-                <p className="text-slate-500">Tokens Out</p>
-                <p className="font-mono text-slate-200">{fmtTokens(s.totalTokensOut)}</p>
+              <p className="text-xs text-slate-500">{s.entries} uso{s.entries !== 1 ? "s" : ""}</p>
+            </CardHeader>
+            <CardContent className="space-y-3 pb-4">
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <p className="text-slate-500 mb-0.5">Tokens In</p>
+                  <p className="font-mono text-slate-200">{fmtTokens(s.totalTokensIn)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-0.5">Tokens Out</p>
+                  <p className="font-mono text-slate-200">{fmtTokens(s.totalTokensOut)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-0.5">Custo total</p>
+                  <p className="font-mono text-slate-200">{fmtCurrency(s.totalCost)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-0.5">Custo médio</p>
+                  <p className="font-mono text-slate-200">
+                    {s.entries > 0 ? fmtCurrency(s.totalCost / s.entries) : "—"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-slate-500">Custo</p>
-                <p className="font-mono text-slate-200">{fmtCurrency(s.totalCost)}</p>
-              </div>
-              <div>
-                <p className="text-slate-500">Uso</p>
-                <p className="font-mono text-slate-200">{s.entries}x</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 pt-1 text-xs">
+
               {s.avgQuality != null && (
-                <span className="text-amber-400 font-mono">{s.avgQuality.toFixed(1)}/5 score</span>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500">Score de qualidade</span>
+                    <span className="font-mono text-amber-400">{s.avgQuality.toFixed(1)}/5</span>
+                  </div>
+                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-amber-500 rounded-full transition-all"
+                      style={{ width: `${(s.avgQuality / 5) * 100}%` }}
+                    />
+                  </div>
+                </div>
               )}
+
               {s.acceptanceRate != null && (
-                <span className={`font-mono ${s.acceptanceRate >= 0.7 ? "text-emerald-400" : s.acceptanceRate >= 0.4 ? "text-amber-400" : "text-rose-400"}`}>
-                  {Math.round(s.acceptanceRate * 100)}% aproveitamento
-                </span>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500">Aproveitamento</span>
+                    <span className={`font-mono ${
+                      s.acceptanceRate >= 0.7 ? "text-emerald-400" :
+                      s.acceptanceRate >= 0.4 ? "text-amber-400" : "text-rose-400"
+                    }`}>
+                      {Math.round(s.acceptanceRate * 100)}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        s.acceptanceRate >= 0.7 ? "bg-emerald-500" :
+                        s.acceptanceRate >= 0.4 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${s.acceptanceRate * 100}%` }}
+                    />
+                  </div>
+                </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

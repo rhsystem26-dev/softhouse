@@ -6,8 +6,8 @@ import type { Delivery, Project } from "@/types/database";
 const statusLabels: Record<string, string> = {
   backlog: "Backlog", in_progress: "Em Progresso", review: "Review", done: "Concluído", blocked: "Bloqueado",
 };
-const statusVariants: Record<string, "info" | "warning" | "success" | "danger"> = {
-  backlog: "info", in_progress: "warning", review: "warning", done: "success", blocked: "danger",
+const statusVariants: Record<string, "default" | "info" | "warning" | "success" | "danger"> = {
+  backlog: "default", in_progress: "warning", review: "info", done: "success", blocked: "danger",
 };
 
 interface MemberInfo {
@@ -52,7 +52,7 @@ export function EntregasTimeline({
         <div className="relative pl-6 border-l-2 border-slate-800 space-y-6">
           {upcoming.map((d) => (
             <div key={d.id} className="relative">
-              <div className={`absolute -left-[25px] w-3 h-3 rounded-full border-2 border-slate-800 ${
+              <div className={`absolute -left-[0.45rem] top-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
                 d.status === "blocked" ? "bg-rose-500" : d.status === "in_progress" || d.status === "review" ? "bg-sky-500" : "bg-slate-600"
               }`} />
               <div className="flex items-start justify-between gap-2">

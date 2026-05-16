@@ -129,22 +129,44 @@ export function MobileSidebar() {
             <span className="font-semibold text-slate-100">Softhouse</span>
           </div>
           <nav className="flex-1 overflow-y-auto p-3">
-            {sidebarItems.map((group) => (
-              <SidebarGroup
-                key={group.label}
-                label={group.label}
-                items={group.items}
-                userRole={appUser?.role ?? null}
-              />
-            ))}
+            {loading ? (
+              <div className="space-y-4 p-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-3 w-16 bg-slate-800" />
+                    <Skeleton className="h-8 w-full bg-slate-800" />
+                    <Skeleton className="h-8 w-full bg-slate-800" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              sidebarItems.map((group) => (
+                <SidebarGroup
+                  key={group.label}
+                  label={group.label}
+                  items={group.items}
+                  userRole={appUser?.role ?? null}
+                />
+              ))
+            )}
           </nav>
-          {appUser && (
+          {loading ? (
+            <div className="border-t border-slate-800/60 p-3">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-8 h-8 rounded-full bg-slate-800" />
+                <div className="space-y-1">
+                  <Skeleton className="h-3 w-24 bg-slate-800" />
+                  <Skeleton className="h-2 w-16 bg-slate-800" />
+                </div>
+              </div>
+            </div>
+          ) : appUser ? (
             <SidebarUserFooter
               fullName={appUser.profile?.full_name ?? appUser.user.email ?? ""}
               email={appUser.user.email ?? ""}
               role={appUser.role}
             />
-          )}
+          ) : null}
         </div>
       </SheetContent>
     </Sheet>
