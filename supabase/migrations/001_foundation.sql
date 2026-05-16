@@ -319,7 +319,7 @@ begin
         where schemaname = 'public' and tablename = 'projects'
       ) then
         execute 'select org_id from public.projects where id = $1'
-        using (new->>'project_id')::uuid
+        using (to_jsonb(new)->>'project_id')::uuid
         into _org_id;
       end if;
     end if;
