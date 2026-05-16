@@ -79,10 +79,10 @@ export function DashboardChart({ data }: { data: ProjectBudgetItem[] }) {
                 fontSize: "13px",
               }}
               labelStyle={{ color: "#e2e8f0" }}
-              formatter={(value: number) => [fmtCurrency(value), "Orçamento"]}
-              labelFormatter={(_label: string, payload: unknown[]) => {
-                const item = (payload as { payload: { fullName: string } }[])[0]?.payload;
-                return item?.fullName ?? _label;
+              formatter={(value) => [fmtCurrency(Number(value) || 0), "Orçamento"]}
+              labelFormatter={(_label, payload) => {
+                const entry = payload?.[0] as { payload?: { fullName?: string } } | undefined;
+                return entry?.payload?.fullName ?? _label;
               }}
             />
             <Bar dataKey="budget" radius={[4, 4, 0, 0]} maxBarSize={48}>
