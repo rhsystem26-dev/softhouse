@@ -316,6 +316,62 @@ export interface Database {
           created_at?: string;
         };
       };
+      ai_usage: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          user_id: string;
+          model_id: string;
+          tokens_in: number;
+          tokens_out: number;
+          cost: number;
+          latency_ms: number | null;
+          quality_score: number | null;
+          time_saved_hours: number | null;
+          result: "accepted" | "rejected" | "modified" | null;
+          delivery_id: string | null;
+          rework: boolean;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          user_id: string;
+          model_id: string;
+          tokens_in?: number;
+          tokens_out?: number;
+          cost?: number;
+          latency_ms?: number | null;
+          quality_score?: number | null;
+          time_saved_hours?: number | null;
+          result?: "accepted" | "rejected" | "modified" | null;
+          delivery_id?: string | null;
+          rework?: boolean;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          user_id?: string;
+          model_id?: string;
+          tokens_in?: number;
+          tokens_out?: number;
+          cost?: number;
+          latency_ms?: number | null;
+          quality_score?: number | null;
+          time_saved_hours?: number | null;
+          result?: "accepted" | "rejected" | "modified" | null;
+          delivery_id?: string | null;
+          rework?: boolean;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {};
     Functions: {
@@ -349,6 +405,7 @@ export interface Database {
       project_member_role: "gerente" | "dev";
       revenue_type: "servico" | "consultoria" | "produto" | "retainer" | "outro";
       cost_category: "ia" | "infra" | "pessoal" | "outros";
+      ai_usage_result: "accepted" | "rejected" | "modified";
     };
   };
 }
@@ -362,6 +419,8 @@ export type Project = Database["public"]["Tables"]["projects"]["Row"];
 export type ProjectMember = Database["public"]["Tables"]["project_members"]["Row"];
 export type AiProvider = Database["public"]["Tables"]["ai_providers"]["Row"];
 export type AiModel = Database["public"]["Tables"]["ai_models"]["Row"];
+export type AiUsage = Database["public"]["Tables"]["ai_usage"]["Row"];
+export type AiUsageResult = Database["public"]["Enums"]["ai_usage_result"];
 export type UserRole = Database["public"]["Enums"]["user_role"];
 export type ProjectStatus = Database["public"]["Enums"]["project_status"];
 export type ProjectMemberRole = Database["public"]["Enums"]["project_member_role"];
