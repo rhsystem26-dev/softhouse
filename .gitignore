@@ -36,6 +36,18 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# policy guard
+.agent-policy-guard/
+.policyguard/
+policyguard.yml
+nul
+
+# editor
+.vscode/
+
+# netlify
+.netlify/
+
 # vercel
 .vercel
 
