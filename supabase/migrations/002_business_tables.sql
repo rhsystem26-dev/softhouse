@@ -125,6 +125,9 @@ create policy "Gerente edita projetos que gerencia"
       and user_id = auth.uid()
       and role = 'gerente'
     )
+  )
+  with check (
+    org_id = (select org_id from public.organization_members where user_id = auth.uid() limit 1)
   );
 
 -- ============================================================
@@ -188,6 +191,7 @@ create policy "Gerente insere members nos seus projetos"
       and pm.user_id = auth.uid()
       and pm.role = 'gerente'
     )
+    and role != 'gerente'
   );
 
 create policy "Gerente remove members dos seus projetos"
@@ -210,7 +214,8 @@ create policy "Gerente edita members nos seus projetos"
       and pm.user_id = auth.uid()
       and pm.role = 'gerente'
     )
-  );
+  )
+  with check (role != 'gerente');
 
 -- ============================================================
 -- AUDIT TRIGGERS

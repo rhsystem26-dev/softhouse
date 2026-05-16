@@ -313,7 +313,7 @@ begin
 
   -- Se não tem org_id direto, tenta via project_id
   if _org_id is null and TG_OP != 'DELETE' then
-    if new ? 'project_id' and (new->>'project_id') is not null then
+    if to_jsonb(new) ? 'project_id' and (to_jsonb(new)->>'project_id') is not null then
       if exists (
         select 1 from pg_tables
         where schemaname = 'public' and tablename = 'projects'
