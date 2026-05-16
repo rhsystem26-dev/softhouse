@@ -180,6 +180,76 @@ export interface Database {
           updated_at?: string;
         };
       };
+      revenues: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          amount: number;
+          description: string | null;
+          date: string;
+          type: "servico" | "consultoria" | "produto" | "retainer" | "outro";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          amount: number;
+          description?: string | null;
+          date?: string;
+          type?: "servico" | "consultoria" | "produto" | "retainer" | "outro";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          amount?: number;
+          description?: string | null;
+          date?: string;
+          type?: "servico" | "consultoria" | "produto" | "retainer" | "outro";
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      costs: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          amount: number;
+          description: string | null;
+          date: string;
+          category: "ia" | "infra" | "pessoal" | "outros";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          amount: number;
+          description?: string | null;
+          date?: string;
+          category?: "ia" | "infra" | "pessoal" | "outros";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          amount?: number;
+          description?: string | null;
+          date?: string;
+          category?: "ia" | "infra" | "pessoal" | "outros";
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       project_members: {
         Row: {
           id: string;
@@ -277,6 +347,8 @@ export interface Database {
       user_role: "admin" | "socio" | "financeiro" | "gerente" | "dev";
       project_status: "active" | "completed" | "on_hold" | "cancelled";
       project_member_role: "gerente" | "dev";
+      revenue_type: "servico" | "consultoria" | "produto" | "retainer" | "outro";
+      cost_category: "ia" | "infra" | "pessoal" | "outros";
     };
   };
 }
@@ -295,3 +367,7 @@ export type ProjectStatus = Database["public"]["Enums"]["project_status"];
 export type ProjectMemberRole = Database["public"]["Enums"]["project_member_role"];
 export type DashboardMetrics = Database["public"]["Functions"]["get_dashboard_metrics"]["Returns"];
 export type ProjectBudgetSummary = Database["public"]["Functions"]["get_projects_budget_summary"]["Returns"][number];
+export type Revenue = Database["public"]["Tables"]["revenues"]["Row"];
+export type Cost = Database["public"]["Tables"]["costs"]["Row"];
+export type RevenueType = Database["public"]["Enums"]["revenue_type"];
+export type CostCategory = Database["public"]["Enums"]["cost_category"];
