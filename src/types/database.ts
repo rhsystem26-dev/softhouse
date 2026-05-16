@@ -248,7 +248,31 @@ export interface Database {
       };
     };
     Views: {};
-    Functions: {};
+    Functions: {
+      get_dashboard_metrics: {
+        Args: { p_org_id: string };
+        Returns: {
+          projects_active: number;
+          projects_completed: number;
+          projects_on_hold: number;
+          projects_total: number;
+          total_budget_active: number;
+          org_members: number;
+        };
+      };
+      get_projects_budget_summary: {
+        Args: { p_org_id: string };
+        Returns: {
+          id: string;
+          name: string;
+          status: string;
+          budget: number | null;
+          start_date: string | null;
+          end_date: string | null;
+          member_count: number;
+        }[];
+      };
+    };
     Enums: {
       user_role: "admin" | "socio" | "financeiro" | "gerente" | "dev";
       project_status: "active" | "completed" | "on_hold" | "cancelled";
@@ -269,3 +293,5 @@ export type AiModel = Database["public"]["Tables"]["ai_models"]["Row"];
 export type UserRole = Database["public"]["Enums"]["user_role"];
 export type ProjectStatus = Database["public"]["Enums"]["project_status"];
 export type ProjectMemberRole = Database["public"]["Enums"]["project_member_role"];
+export type DashboardMetrics = Database["public"]["Functions"]["get_dashboard_metrics"]["Returns"];
+export type ProjectBudgetSummary = Database["public"]["Functions"]["get_projects_budget_summary"]["Returns"][number];
