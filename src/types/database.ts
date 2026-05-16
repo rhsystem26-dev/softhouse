@@ -110,11 +110,149 @@ export interface Database {
           created_at?: string;
         };
       };
+      clients: {
+        Row: {
+          id: string;
+          org_id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          name?: string;
+          email?: string | null;
+          phone?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      projects: {
+        Row: {
+          id: string;
+          org_id: string;
+          client_id: string | null;
+          name: string;
+          description: string | null;
+          status: "active" | "completed" | "on_hold" | "cancelled";
+          start_date: string | null;
+          end_date: string | null;
+          budget: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          client_id?: string | null;
+          name: string;
+          description?: string | null;
+          status?: "active" | "completed" | "on_hold" | "cancelled";
+          start_date?: string | null;
+          end_date?: string | null;
+          budget?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          client_id?: string | null;
+          name?: string;
+          description?: string | null;
+          status?: "active" | "completed" | "on_hold" | "cancelled";
+          start_date?: string | null;
+          end_date?: string | null;
+          budget?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      project_members: {
+        Row: {
+          id: string;
+          project_id: string;
+          user_id: string;
+          role: "gerente" | "dev";
+          assigned_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          user_id: string;
+          role?: "gerente" | "dev";
+          assigned_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          user_id?: string;
+          role?: "gerente" | "dev";
+          assigned_at?: string;
+        };
+      };
+      ai_providers: {
+        Row: {
+          id: string;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          created_at?: string;
+        };
+      };
+      ai_models: {
+        Row: {
+          id: string;
+          provider_id: string;
+          name: string;
+          input_cost_per_1m: number;
+          output_cost_per_1m: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          provider_id: string;
+          name: string;
+          input_cost_per_1m?: number;
+          output_cost_per_1m?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          provider_id?: string;
+          name?: string;
+          input_cost_per_1m?: number;
+          output_cost_per_1m?: number;
+          created_at?: string;
+        };
+      };
     };
     Views: {};
     Functions: {};
     Enums: {
       user_role: "admin" | "socio" | "financeiro" | "gerente" | "dev";
+      project_status: "active" | "completed" | "on_hold" | "cancelled";
+      project_member_role: "gerente" | "dev";
     };
   };
 }
@@ -123,4 +261,11 @@ export type Organization = Database["public"]["Tables"]["organizations"]["Row"];
 export type OrganizationMember = Database["public"]["Tables"]["organization_members"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type AuditLog = Database["public"]["Tables"]["audit_logs"]["Row"];
+export type Client = Database["public"]["Tables"]["clients"]["Row"];
+export type Project = Database["public"]["Tables"]["projects"]["Row"];
+export type ProjectMember = Database["public"]["Tables"]["project_members"]["Row"];
+export type AiProvider = Database["public"]["Tables"]["ai_providers"]["Row"];
+export type AiModel = Database["public"]["Tables"]["ai_models"]["Row"];
 export type UserRole = Database["public"]["Enums"]["user_role"];
+export type ProjectStatus = Database["public"]["Enums"]["project_status"];
+export type ProjectMemberRole = Database["public"]["Enums"]["project_member_role"];
