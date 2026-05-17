@@ -1,6 +1,6 @@
 # Evolution API — Contrato Técnico (Fase 8.3)
 
-Contrato entre Agente 1 (Fase 8.3A — fundação) e Agente 2 (Fase 8.3B — envio/UI/webhook).
+Contrato consolidado pós-integração 8.3A + 8.3B. Fundação (8.3A) + envio/rate-limit/actions (8.3B) integrados em um único conjunto coerente.
 
 ## Migration
 
@@ -126,14 +126,18 @@ UpdateEvolutionMessageLogInput
 - `EVOLUTION_ENCRYPTION_KEY` (env)
 - Quaisquer funções de `evolution-crypto` em código client (`"use client"`)
 
-## Responsabilidades do Agente 2 (8.3B)
+## Camada de envio (integrada pós-8.3B)
 
-- `src/lib/server/evolution-service.ts` — wrapper HTTP para Evolution API
-- `src/lib/server/evolution-rate-limit.ts` — rate limit antes de enviar
-- `src/lib/server/evolution-message-service.ts` — orquestra: lê config → chama service → grava log
-- `src/lib/actions/evolution.ts` — server action de envio
-- `src/app/(authenticated)/app/integracoes/evolution/page.tsx` — UI de configuração + envio
-- `src/components/evolution/*` — UI
-- `src/app/api/webhooks/evolution/route.ts` — webhook inbound (assinatura via `webhook_secret`)
+- `src/lib/server/evolution-client.ts` — HTTP wrapper (fetch + AbortController + timeout). `testEvolutionInstanceStatus`, `sendEvolutionTextMessage`
+- `src/lib/server/evolution-rate-limit.ts` — `checkRateLimit(orgId)`: 10 msg/min/org via contagem de `evolution_message_logs` últimos 60s
+- `src/lib/server/evolution-message-service.ts` — orquestra: lê secrets → rate-limit → log pending → envia → atualiza log
+- `src/lib/server/evolution-service.ts` — guards de role (admin/socio) + parsing Zod + chama repository/message-service
+- `src/lib/validations/evolution.ts` — Zod schemas (`saveEvolutionConfigSchema`, `sendEvolutionMessageSchema`)
+- `src/lib/actions/evolution.ts` — server actions: `saveEvolutionConfigAction`, `testEvolutionConnectionAction`, `sendEvolutionMessageAction`, `getEvolutionConfigAction`
 
-Não tocar em nada do Agente 1.
+Todos os arquivos server-side usam `import "server-only"`. Não há UI ainda — Fase 8.3C / 8.4 implementarão.
+
+## Próximas fases (não nesta integração)
+
+- Fase 8.3C — UI de configuração + envio (`src/app/(authenticated)/app/integracoes/evolution/page.tsx`)
+- Fase 8.4 — Webhook inbound (`src/app/api/webhooks/evolution/route.ts`) usando `webhook_secret` para HMAC
