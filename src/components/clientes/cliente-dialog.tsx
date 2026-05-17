@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClientAction, updateClientAction } from "@/lib/actions/clients";
 import { useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import type { Client } from "@/types/database";
 
 interface ClienteDialogProps {
@@ -29,8 +30,10 @@ export function ClienteDialog({ children, client }: ClienteDialogProps) {
 
     if (result.error) {
       setError(result.error);
+      toast.error(result.error);
       setLoading(false);
     } else {
+      toast.success(client ? "Cliente atualizado" : "Cliente criado");
       setOpen(false);
       setLoading(false);
     }

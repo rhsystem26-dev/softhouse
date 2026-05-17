@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { canWrite } from "@/lib/constants/roles";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -27,7 +28,7 @@ export async function createClientAction(formData: FormData) {
     .eq("user_id", user.id)
     .single();
 
-  if (!member || !["admin", "socio"].includes(member.role)) {
+  if (!member || !canWrite(member.role)) {
     return { error: "Sem permissão" };
   }
 
@@ -61,7 +62,7 @@ export async function updateClientAction(id: string, formData: FormData) {
     .eq("user_id", user.id)
     .single();
 
-  if (!member || !["admin", "socio"].includes(member.role)) {
+  if (!member || !canWrite(member.role)) {
     return { error: "Sem permissão" };
   }
 
@@ -87,7 +88,7 @@ export async function deleteClientAction(id: string) {
     .eq("user_id", user.id)
     .single();
 
-  if (!member || !["admin", "socio"].includes(member.role)) {
+  if (!member || !canWrite(member.role)) {
     return { error: "Sem permissão" };
   }
 

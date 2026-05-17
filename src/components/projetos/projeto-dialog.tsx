@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectPopover, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createProjectAction, updateProjectAction } from "@/lib/actions/projects";
 import { useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import type { Project, Client } from "@/types/database";
 
 interface ProjetoDialogProps {
@@ -28,8 +29,15 @@ export function ProjetoDialog({ children, project, clients }: ProjetoDialogProps
     const result = project
       ? await updateProjectAction(project.id, formData)
       : await createProjectAction(formData);
-    if (result.error) { setError(result.error); setLoading(false); }
-    else { setOpen(false); setLoading(false); }
+    if (result.error) {
+      setError(result.error);
+      toast.error(result.error);
+      setLoading(false);
+    } else {
+      toast.success(project ? "Projeto atualizado" : "Projeto criado");
+      setOpen(false);
+      setLoading(false);
+    }
   }
 
   return (

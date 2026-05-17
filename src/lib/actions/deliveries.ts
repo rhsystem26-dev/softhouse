@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { canWrite } from "@/lib/constants/roles";
 
 const deliverySchema = z.object({
   project_id: z.string().uuid("Projeto é obrigatório"),
@@ -105,7 +106,7 @@ export async function deleteDeliveryAction(id: string) {
     .eq("user_id", user.id)
     .single();
 
-  if (!member || !["admin", "socio"].includes(member.role)) {
+  if (!member || !canWrite(member.role)) {
     return { error: "Sem permissão" };
   }
 

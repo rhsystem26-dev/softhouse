@@ -16,7 +16,17 @@
       "Skill(superpowers:executing-plans)",
       "Skill(superpowers:executing-plans:*)",
       "Bash(rtk tsc *)",
-      "Bash(rtk git *)"
+      "Bash(rtk git *)",
+      "Bash(vercel ls *)",
+      "Bash(rtk npx *)",
+      "Bash(rtk npm *)",
+      "Bash(rtk read *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(rtk grep *)",
+      "Bash(rtk ls *)",
+      "Bash(cp \"C:/softhouse-finance/.env.local\" \"C:/softhouse-finance/.claude/worktrees/tender-tesla-213f0c/.env.local\")",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.local'}\\); console.log\\('URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.slice\\(0,30\\)\\)\")",
+      "Bash(npm install *)"
     ]
   }
 }

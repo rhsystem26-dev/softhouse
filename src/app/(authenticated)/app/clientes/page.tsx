@@ -3,6 +3,7 @@ import { ClienteTable } from "@/components/clientes/cliente-table";
 import { ClienteDialog } from "@/components/clientes/cliente-dialog";
 import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { canWrite } from "@/lib/constants/roles";
 
 export default async function ClientesPage() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function ClientesPage() {
     .eq("user_id", user!.id)
     .single();
 
-  const canManage = member?.role && ["admin", "socio"].includes(member.role);
+  const canManage = member?.role && canWrite(member.role);
 
   const { data: clients } = await supabase
     .from("clients")

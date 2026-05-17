@@ -4,6 +4,8 @@ import { Cpu } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { AiUsage, AiModel } from "@/types/database";
 
+type AiModelWithProvider = AiModel & { ai_providers: { name: string } | null };
+
 const MODEL_COLORS: Record<string, string> = {
   "GPT-4o": "#10b981",
   "GPT-4": "#10b981",
@@ -34,7 +36,7 @@ interface ModelStats {
   acceptanceRate: number | null;
 }
 
-function computeModelStats(usage: AiUsage[], models: AiModel[]): ModelStats[] {
+function computeModelStats(usage: AiUsage[], models: AiModelWithProvider[]): ModelStats[] {
   const byModel = new Map<string, AiUsage[]>();
   for (const u of usage) {
     const list = byModel.get(u.model_id) || [];
@@ -58,7 +60,7 @@ function computeModelStats(usage: AiUsage[], models: AiModel[]): ModelStats[] {
     return {
       modelId: m.id,
       modelName: m.name,
-      providerName: (m as any).ai_providers?.name ?? "—",
+      providerName: m.ai_providers?.name ?? "—",
       totalTokensIn,
       totalTokensOut,
       totalCost,
@@ -69,7 +71,7 @@ function computeModelStats(usage: AiUsage[], models: AiModel[]): ModelStats[] {
   });
 }
 
-export function IAModelCards({ usage, models }: { usage: AiUsage[]; models: AiModel[] }) {
+export function IAModelCards({ usage, models }: { usage: AiUsage[]; models: AiModelWithProvider[] }) {
   const stats = computeModelStats(usage, models);
 
   const fmtTokens = (v: number) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}M` : `${(v / 1_000).toFixed(1)}k`;

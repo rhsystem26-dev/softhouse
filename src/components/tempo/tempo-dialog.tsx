@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,8 +25,8 @@ export function TempoDialog({ projects, members }: { projects: Pick<Project, "id
     setError(null);
     setLoading(true);
     const result = await createTimeEntryAction(new FormData(e.currentTarget));
-    if (result.error) { setError(result.error); setLoading(false); }
-    else { setOpen(false); setLoading(false); }
+    if (result.error) { setError(result.error); toast.error(result.error); setLoading(false); }
+    else { toast.success("Hora lançada"); setOpen(false); setLoading(false); }
   }
 
   return (

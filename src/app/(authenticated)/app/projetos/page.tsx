@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProjetoView } from "@/components/projetos/projeto-view";
 import { ProjetoDialog } from "@/components/projetos/projeto-dialog";
 import { Button } from "@/components/ui/button";
+import { canWrite } from "@/lib/constants/roles";
 
 export default async function ProjetosPage() {
   const supabase = await createClient();
@@ -13,7 +14,7 @@ export default async function ProjetosPage() {
     .eq("user_id", user!.id)
     .single();
 
-  const canManage = member?.role && ["admin", "socio"].includes(member.role);
+  const canManage = member?.role && canWrite(member.role);
 
   const [{ data: projects }, { data: clients }] = await Promise.all([
     supabase.from("projects").select("*").eq("org_id", member?.org_id ?? "").order("created_at", { ascending: false }),
