@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Search, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { MobileSidebar } from "./sidebar";
 import { useUser } from "@/hooks/use-user";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CommandPalette } from "@/components/ui/command-palette";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -78,17 +79,7 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-1">
-        <button
-          className="p-2 rounded-md text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-colors hidden sm:flex items-center gap-2 cursor-not-allowed opacity-60"
-          title="Buscar (em breve)"
-          disabled
-          aria-disabled="true"
-        >
-          <Search className="w-4 h-4" />
-          <kbd className="hidden lg:inline text-xs text-slate-600 bg-slate-800/80 px-1.5 py-0.5 rounded font-mono border border-slate-700/60">
-            ⌘K
-          </kbd>
-        </button>
+        <CommandPalette />
 
         {appUser && (
           <DropdownMenu>

@@ -27,18 +27,23 @@ export function ProjetoTable({
   const [deleting, setDeleting] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<keyof Project>("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 10;
 
   const sorted = useMemo(() => {
-    const sorted = [...projects].sort((a, b) => {
+    return [...projects].sort((a, b) => {
       const av = a[sortKey] ?? ""; const bv = b[sortKey] ?? "";
       return String(av).localeCompare(String(bv)) * (sortDir === "asc" ? 1 : -1);
     });
-    return sorted;
   }, [projects, sortKey, sortDir]);
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  const paginated = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   function toggleSort(key: keyof Project) {
     if (sortKey === key) setSortDir(d => d === "asc" ? "desc" : "asc");
     else { setSortKey(key); setSortDir("asc"); }
+    setPage(0);
   }
 
   async function handleDelete(id: string) {
@@ -59,6 +64,7 @@ export function ProjetoTable({
   }
 
   return (
+    <div className="space-y-0">
     <div className="rounded-lg border border-slate-800/60 bg-slate-900">
       <Table>
         <TableHeader>
@@ -76,7 +82,7 @@ export function ProjetoTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sorted.map((p) => (
+          {paginated.map((p) => (
             <TableRow key={p.id}>
               <TableCell className="font-medium text-slate-100">{p.name}</TableCell>
               <TableCell className="text-slate-400">{clientName(p.client_id)}</TableCell>
@@ -114,6 +120,23 @@ export function ProjetoTable({
           ))}
         </TableBody>
       </Table>
+    </div>
+    {totalPages > 1 && (
+      <div className="flex items-center justify-between px-4 py-3 border-t border-slate-800/60">
+        <p className="text-xs text-slate-500">
+          {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} de {sorted.length} projetos
+        </p>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 0} className="h-7 px-2 text-xs">
+            ← Anterior
+          </Button>
+          <span className="text-xs text-slate-500 px-2">{page + 1} / {totalPages}</span>
+          <Button variant="ghost" size="sm" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages - 1} className="h-7 px-2 text-xs">
+            Próximo →
+          </Button>
+        </div>
+      </div>
+    )}
     </div>
   );
 }
