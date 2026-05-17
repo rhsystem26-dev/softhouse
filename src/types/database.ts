@@ -445,6 +445,82 @@ export interface Database {
           updated_at?: string;
         };
       };
+      evolution_configs: {
+        Row: {
+          id: string;
+          org_id: string;
+          instance_url: string;
+          api_key_encrypted: string;
+          webhook_secret_encrypted: string;
+          enabled: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          instance_url: string;
+          api_key_encrypted: string;
+          webhook_secret_encrypted: string;
+          enabled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          instance_url?: string;
+          api_key_encrypted?: string;
+          webhook_secret_encrypted?: string;
+          enabled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      evolution_message_logs: {
+        Row: {
+          id: string;
+          org_id: string;
+          config_id: string | null;
+          to_phone: string;
+          message: string;
+          status: "pending" | "sent" | "failed" | "rate_limited";
+          external_id: string | null;
+          error_message: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          config_id?: string | null;
+          to_phone: string;
+          message: string;
+          status?: "pending" | "sent" | "failed" | "rate_limited";
+          external_id?: string | null;
+          error_message?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          config_id?: string | null;
+          to_phone?: string;
+          message?: string;
+          status?: "pending" | "sent" | "failed" | "rate_limited";
+          external_id?: string | null;
+          error_message?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       infra_resources: {
         Row: {
           id: string;
@@ -515,6 +591,7 @@ export interface Database {
       cost_category: "ia" | "infra" | "pessoal" | "outros";
       ai_usage_result: "accepted" | "rejected" | "modified";
       delivery_status: "backlog" | "in_progress" | "review" | "done" | "blocked";
+      evolution_message_status: "pending" | "sent" | "failed" | "rate_limited";
     };
   };
 }
