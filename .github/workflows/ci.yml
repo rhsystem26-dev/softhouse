@@ -40,10 +40,25 @@ jobs:
 
       - run: npm run lint
 
+  policyguard:
+    name: Policy Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run policyguard
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [typecheck]
+    needs: [typecheck, policyguard]
     steps:
       - uses: actions/checkout@v4
 

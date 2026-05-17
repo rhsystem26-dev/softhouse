@@ -445,6 +445,41 @@ export interface Database {
           updated_at?: string;
         };
       };
+      infra_resources: {
+        Row: {
+          id: string;
+          project_id: string;
+          org_id: string;
+          name: string;
+          type: "server" | "database" | "storage" | "cdn" | "function" | "queue" | "other";
+          provider: string | null;
+          cost_monthly: number;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          org_id: string;
+          name: string;
+          type?: "server" | "database" | "storage" | "cdn" | "function" | "queue" | "other";
+          provider?: string | null;
+          cost_monthly?: number;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          org_id?: string;
+          name?: string;
+          type?: "server" | "database" | "storage" | "cdn" | "function" | "queue" | "other";
+          provider?: string | null;
+          cost_monthly?: number;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {};
     Functions: {
@@ -507,3 +542,5 @@ export type CostCategory = Database["public"]["Enums"]["cost_category"];
 export type TimeEntry = Database["public"]["Tables"]["time_entries"]["Row"];
 export type Delivery = Database["public"]["Tables"]["deliveries"]["Row"];
 export type DeliveryStatus = Database["public"]["Enums"]["delivery_status"];
+export type InfraResource = Database["public"]["Tables"]["infra_resources"]["Row"];
+export type InfraResourceType = Database["public"]["Tables"]["infra_resources"]["Row"]["type"];

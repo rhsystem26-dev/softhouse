@@ -1,0 +1,28 @@
+version: 1
+project:
+  name: softhouse-finance
+audit_mode:
+  legacy:
+    action: report_only
+  changed_files:
+    action: enforce
+  new_files:
+    action: enforce_strict
+rules:
+  - id: no-direct-supabase-in-ui
+    severity: high
+    applies_to:
+      paths:
+        - src/pages/**
+        - src/components/**
+    forbidden_patterns:
+      - "supabase.from("
+      - "supabase.rpc("
+      - "supabase.functions.invoke("
+    allowed_paths:
+      - src/modules/**/repositories/**
+      - src/modules/**/services/**
+      - src/integrations/**
+      - supabase/functions/**
+    message: Pages e components não devem chamar Supabase diretamente.
+    fix_hint: Mover acesso ao Supabase para repository/service.

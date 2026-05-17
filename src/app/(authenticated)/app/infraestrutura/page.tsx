@@ -23,13 +23,12 @@ export default async function InfraestruturaPage() {
     );
   }
 
-  const [{ data: infraCosts }, { data: projects }] = await Promise.all([
+  const [{ data: resources }, { data: projects }] = await Promise.all([
     supabase
-      .from("costs")
+      .from("infra_resources")
       .select("*")
       .eq("org_id", orgId)
-      .eq("category", "infra")
-      .order("date", { ascending: false }),
+      .order("cost_monthly", { ascending: false }),
     supabase
       .from("projects")
       .select("id, name")
@@ -42,15 +41,15 @@ export default async function InfraestruturaPage() {
       <div>
         <h1 className="text-xl font-semibold text-slate-100">Infraestrutura</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Custos de infraestrutura por projeto e período
+          Recursos de infraestrutura por projeto e custo mensal
         </p>
       </div>
 
-      <InfraKPICards costs={infraCosts ?? []} />
+      <InfraKPICards resources={resources ?? []} />
 
-      <InfraChart costs={infraCosts ?? []} />
+      <InfraChart resources={resources ?? []} />
 
-      <InfraCostTable costs={infraCosts ?? []} projects={projects ?? []} />
+      <InfraCostTable resources={resources ?? []} projects={projects ?? []} />
     </div>
   );
 }

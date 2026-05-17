@@ -39,7 +39,6 @@ yarn-error.log*
 # policy guard
 .agent-policy-guard/
 .policyguard/
-policyguard.yml
 nul
 
 # editor
