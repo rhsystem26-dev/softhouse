@@ -34,13 +34,17 @@ export function SelectValue({ className, ...props }: ComponentProps<typeof BaseS
 
 export function SelectPopover({ className, children, ...props }: ComponentProps<typeof BaseSelect.Popup>) {
   return (
-    <BaseSelect.Popup
-      data-slot="select-popover"
-      className={cn("z-50 rounded-md border border-slate-800 bg-slate-900 shadow-lg", className)}
-      {...props}
-    >
-      {children}
-    </BaseSelect.Popup>
+    <BaseSelect.Portal>
+      <BaseSelect.Positioner sideOffset={4} className="z-50 outline-none">
+        <BaseSelect.Popup
+          data-slot="select-popover"
+          className={cn("rounded-md border border-slate-800 bg-slate-900 shadow-lg max-h-60 overflow-y-auto", className)}
+          {...props}
+        >
+          {children}
+        </BaseSelect.Popup>
+      </BaseSelect.Positioner>
+    </BaseSelect.Portal>
   );
 }
 
