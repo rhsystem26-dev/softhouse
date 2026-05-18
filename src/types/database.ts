@@ -55,6 +55,7 @@ export interface Database {
           user_id: string;
           full_name: string | null;
           email: string | null;
+          phone: string | null;
           avatar_url: string | null;
           approval_status: "pending" | "approved" | "rejected";
           approved_at: string | null;
@@ -69,6 +70,7 @@ export interface Database {
           user_id: string;
           full_name?: string | null;
           email?: string | null;
+          phone?: string | null;
           avatar_url?: string | null;
           approval_status?: "pending" | "approved" | "rejected";
           approved_at?: string | null;
@@ -83,6 +85,7 @@ export interface Database {
           user_id?: string;
           full_name?: string | null;
           email?: string | null;
+          phone?: string | null;
           avatar_url?: string | null;
           approval_status?: "pending" | "approved" | "rejected";
           approved_at?: string | null;

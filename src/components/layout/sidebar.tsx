@@ -104,6 +104,7 @@ export function Sidebar() {
           fullName={appUser.profile?.full_name ?? appUser.user.email ?? ""}
           email={appUser.user.email ?? ""}
           role={appUser.role}
+          avatarUrl={appUser.profile?.avatar_url ?? null}
         />
       ) : null}
     </aside>
@@ -169,6 +170,7 @@ export function MobileSidebar() {
               fullName={appUser.profile?.full_name ?? appUser.user.email ?? ""}
               email={appUser.user.email ?? ""}
               role={appUser.role}
+              avatarUrl={appUser.profile?.avatar_url ?? null}
             />
           ) : null}
         </div>
