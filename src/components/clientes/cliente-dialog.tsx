@@ -1,10 +1,10 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { cloneElement, isValidElement, useState, type ReactNode } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClientAction, updateClientAction } from "@/lib/actions/clients";
-import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { Client } from "@/types/database";
 
@@ -39,9 +39,15 @@ export function ClienteDialog({ children, client }: ClienteDialogProps) {
     }
   }
 
+  const trigger = isValidElement(children)
+    ? cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
+        onClick: () => setOpen(true),
+      })
+    : <span onClick={() => setOpen(true)} style={{ cursor: "pointer" }}>{children}</span>;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{children}</DialogTrigger>
+      {trigger}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{client ? "Editar Cliente" : "Novo Cliente"}</DialogTitle>

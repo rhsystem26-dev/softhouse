@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,11 +31,9 @@ export function IADialog({ projects, models }: { projects: Pick<Project, "id" | 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button variant="outline" size="sm" className="gap-1.5">
-          <Plus className="w-3.5 h-3.5" /> Registrar
-        </Button>
-      </DialogTrigger>
+      <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setOpen(true)}>
+        <Plus className="w-3.5 h-3.5" /> Registrar
+      </Button>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Registrar Uso de IA</DialogTitle>
