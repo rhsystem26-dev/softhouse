@@ -1,9 +1,10 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
-import { useMemo } from "react";
 import type { AiUsage, AiModel } from "@/types/database";
 
 const modelColors = [
@@ -11,6 +12,9 @@ const modelColors = [
 ];
 
 export function IATokensChart({ usage, models }: { usage: AiUsage[]; models: AiModel[] }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const modelMap = new Map(models.map((m) => [m.id, m.name]));
 
   const chartData = useMemo(() => {
@@ -32,6 +36,15 @@ export function IATokensChart({ usage, models }: { usage: AiUsage[]; models: AiM
   }, [usage, modelMap]);
 
   const modelNames = models.map((m) => m.name);
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader><CardTitle className="text-base text-slate-200">Tokens por Modelo</CardTitle></CardHeader>
+        <CardContent><Skeleton className="h-[300px] w-full bg-slate-800/40 rounded" /></CardContent>
+      </Card>
+    );
+  }
 
   if (chartData.length === 0) {
     return (

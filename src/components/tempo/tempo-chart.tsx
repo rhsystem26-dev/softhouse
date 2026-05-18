@@ -1,9 +1,10 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import { useMemo } from "react";
 import type { TimeEntry, Project } from "@/types/database";
 
 const colors = ["#6366f1", "#10b981", "#f59e0b", "#0ea5e9", "#f43f5e", "#8b5cf6", "#14b8a6"];
@@ -41,7 +42,19 @@ export function TempoChart({
     return Array.from(keys);
   }, [chartData]);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const title = byUser ? "Horas por Colaborador" : "Horas por Projeto";
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader><CardTitle className="text-base text-slate-200">{title}</CardTitle></CardHeader>
+        <CardContent><Skeleton className="h-[300px] w-full bg-slate-800/40 rounded" /></CardContent>
+      </Card>
+    );
+  }
 
   if (chartData.length === 0) {
     return (

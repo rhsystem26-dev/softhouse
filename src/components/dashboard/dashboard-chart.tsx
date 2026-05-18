@@ -1,5 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
@@ -20,6 +22,11 @@ const statusColors: Record<string, string> = {
 };
 
 export function DashboardChart({ data }: { data: ProjectBudgetItem[] }) {
+  // Mount guard: Recharts ResponsiveContainer reads DOM dimensions and causes
+  // React 19 hydration mismatch (#418) if rendered during SSR. Only render on client.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const chartData = data
     .filter((p) => p.budget != null && p.budget > 0)
     .slice(0, 10)
@@ -29,6 +36,26 @@ export function DashboardChart({ data }: { data: ProjectBudgetItem[] }) {
       status: p.status,
       fullName: p.name,
     }));
+
+  const fmtCurrency = (v: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    }).format(v);
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-200">Orçamento por Projeto</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[300px] w-full bg-slate-800/40 rounded" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (chartData.length === 0) {
     return (
@@ -42,13 +69,6 @@ export function DashboardChart({ data }: { data: ProjectBudgetItem[] }) {
       </Card>
     );
   }
-
-  const fmtCurrency = (v: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      maximumFractionDigits: 0,
-    }).format(v);
 
   return (
     <Card className="bg-slate-900 border-slate-800/60">

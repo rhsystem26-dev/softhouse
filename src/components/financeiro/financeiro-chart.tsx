@@ -1,12 +1,16 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
-import { useMemo } from "react";
 import type { Revenue, Cost } from "@/types/database";
 
 export function FinanceiroChart({ revenues, costs }: { revenues: Revenue[]; costs: Cost[] }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const chartData = useMemo(() => {
     const monthly = new Map<string, { month: string; receita: number; custo: number }>();
 
@@ -31,6 +35,15 @@ export function FinanceiroChart({ revenues, costs }: { revenues: Revenue[]; cost
         month: new Date(d.month + "-01").toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }),
       }));
   }, [revenues, costs]);
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader><CardTitle className="text-base text-slate-200">Receita vs Custo</CardTitle></CardHeader>
+        <CardContent><Skeleton className="h-[300px] w-full bg-slate-800/40 rounded" /></CardContent>
+      </Card>
+    );
+  }
 
   if (chartData.length === 0) {
     return (

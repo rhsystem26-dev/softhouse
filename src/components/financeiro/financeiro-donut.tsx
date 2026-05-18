@@ -1,7 +1,8 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { useMemo } from "react";
 import type { Cost } from "@/types/database";
 
 const categoryColors: Record<string, string> = {
@@ -19,6 +20,9 @@ const categoryLabels: Record<string, string> = {
 };
 
 export function FinanceiroDonut({ costs }: { costs: Cost[] }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const data = useMemo(() => {
     const byCategory = new Map<string, number>();
     for (const c of costs) {
@@ -27,6 +31,15 @@ export function FinanceiroDonut({ costs }: { costs: Cost[] }) {
     return Array.from(byCategory.entries())
       .map(([category, value]) => ({ name: categoryLabels[category] ?? category, value, color: categoryColors[category] ?? "#64748b" }));
   }, [costs]);
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader><CardTitle className="text-base text-slate-200">Custos por Categoria</CardTitle></CardHeader>
+        <CardContent><Skeleton className="h-[260px] w-full bg-slate-800/40 rounded" /></CardContent>
+      </Card>
+    );
+  }
 
   if (data.length === 0) {
     return (

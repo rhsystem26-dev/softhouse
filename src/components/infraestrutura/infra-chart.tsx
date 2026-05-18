@@ -1,5 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Server } from "lucide-react";
@@ -26,7 +28,21 @@ function buildTypeData(resources: InfraResource[]) {
 }
 
 export function InfraChart({ resources }: { resources: InfraResource[] }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const data = buildTypeData(resources);
+
+  if (!mounted) {
+    return (
+      <Card className="bg-slate-900 border-slate-800/60">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-slate-400">Custo Mensal por Tipo de Recurso</CardTitle>
+        </CardHeader>
+        <CardContent><Skeleton className="h-[240px] w-full bg-slate-800/40 rounded" /></CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-slate-900 border-slate-800/60">

@@ -1,12 +1,12 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { cloneElement, isValidElement, useState, type ReactNode } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectPopover, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createProjectAction, updateProjectAction } from "@/lib/actions/projects";
-import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { Project, Client } from "@/types/database";
 
@@ -40,9 +40,18 @@ export function ProjetoDialog({ children, project, clients }: ProjetoDialogProps
     }
   }
 
+  // Base UI does not support asChild / Slot merging — DialogTrigger renders as <button>,
+  // which nests inside the passed <Button> child causing <button><button> invalid HTML
+  // (Base UI Error #59). Use cloneElement to add onClick to the child directly.
+  const trigger = isValidElement(children)
+    ? cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
+        onClick: () => setOpen(true),
+      })
+    : <span onClick={() => setOpen(true)} style={{ cursor: "pointer" }}>{children}</span>;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{children}</DialogTrigger>
+      {trigger}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{project ? "Editar Projeto" : "Novo Projeto"}</DialogTitle>
