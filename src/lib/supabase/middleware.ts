@@ -1,6 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// Rotas acessíveis sem autenticação
+const PUBLIC_PATHS = [
+  "/login",
+  "/criar-conta",
+  "/esqueceu-senha",
+  "/redefinir-senha",
+  "/aguardando-aprovacao",
+  "/auth/callback",
+  "/auth/signout",
+];
+
+// Rotas públicas que usuário autenticado e aprovado não deve ver (redireciona pro app)
+const AUTH_REDIRECT_PATHS = ["/login", "/criar-conta", "/esqueceu-senha", "/redefinir-senha"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -21,22 +35,23 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // Refresca a sessão (crítico para Supabase SSR)
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const publicPaths = ["/login", "/criar-conta", "/esqueceu-senha", "/redefinir-senha"];
+  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
-  // Usuário não autenticado → redireciona para /login (exceto rotas públicas)
-  if (!user && !publicPaths.includes(pathname)) {
+  // Não autenticado tentando acessar rota protegida → login
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Usuário autenticado tentando acessar página pública → redireciona para /app/dashboard
-  if (user && publicPaths.includes(pathname)) {
+  // Autenticado tentando acessar login/criar-conta etc. → app
+  if (user && AUTH_REDIRECT_PATHS.includes(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/app/dashboard";
     return NextResponse.redirect(url);
