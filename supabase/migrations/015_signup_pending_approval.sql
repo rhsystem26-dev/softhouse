@@ -34,6 +34,9 @@ add column if not exists rejection_reason text;
 -- ============================================================
 -- 2. Marcar usuários existentes (com membership) como aprovados
 -- ============================================================
+-- Disable triggers temporarily to avoid side effects from other triggers on profiles
+set session_replication_role = replica;
+
 update public.profiles p
 set
   approval_status = 'approved',
@@ -44,6 +47,8 @@ where exists (
   where om.user_id = p.user_id
 )
 and p.approval_status = 'pending';
+
+set session_replication_role = default;
 
 -- ============================================================
 -- 3. Índice para busca de pendentes
