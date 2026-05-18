@@ -4,6 +4,8 @@ import {
   handleTestConnection,
   handleSendMessage,
   handleGetConfig,
+  handleGetMessageLogs,
+  type MessageLogForUI,
 } from "@/lib/server/evolution-service";
 
 function errorMessage(err: unknown, fallback: string): string {
@@ -15,14 +17,14 @@ export async function saveEvolutionConfigAction(formData: FormData) {
   try {
     const input = {
       instanceUrl: formData.get("instanceUrl") as string,
-      apiKey: formData.get("apiKey") as string,
-      webhookSecret: formData.get("webhookSecret") as string,
+      apiKey: formData.get("apiKey") as string ?? "",
+      webhookSecret: formData.get("webhookSecret") as string ?? "",
       enabled: formData.get("enabled") === "true" || formData.get("enabled") === "on",
     };
     const result = await handleSaveConfig(input);
     return { success: true as const, data: result };
   } catch (err) {
-    return { success: false as const, error: errorMessage(err, "Erro ao salvar configuracao") };
+    return { success: false as const, error: errorMessage(err, "Erro ao salvar configuração") };
   }
 }
 
@@ -31,7 +33,7 @@ export async function testEvolutionConnectionAction() {
     const result = await handleTestConnection();
     return { success: true as const, data: result };
   } catch (err) {
-    return { success: false as const, error: errorMessage(err, "Erro ao testar conexao") };
+    return { success: false as const, error: errorMessage(err, "Erro ao testar conexão") };
   }
 }
 
@@ -52,6 +54,17 @@ export async function getEvolutionConfigAction() {
     const result = await handleGetConfig();
     return { success: true as const, data: result };
   } catch (err) {
-    return { success: false as const, error: errorMessage(err, "Erro ao buscar configuracao") };
+    return { success: false as const, error: errorMessage(err, "Erro ao buscar configuração") };
+  }
+}
+
+export async function getEvolutionMessageLogsAction(): Promise<
+  { success: true; data: MessageLogForUI[] } | { success: false; error: string }
+> {
+  try {
+    const data = await handleGetMessageLogs();
+    return { success: true as const, data };
+  } catch (err) {
+    return { success: false as const, error: errorMessage(err, "Erro ao buscar logs") };
   }
 }

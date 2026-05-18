@@ -16,6 +16,15 @@ import {
 } from "@/lib/validations/evolution";
 import type { SanitizedEvolutionConfig } from "./evolution-types";
 
+export interface MessageLogForUI {
+  id: string;
+  to_phone: string;
+  message: string;
+  status: string;
+  error_message: string | null;
+  created_at: string;
+}
+
 const ALLOWED_ROLES = new Set(["admin", "socio"]);
 
 async function requireAdminOrSocio(): Promise<{ orgId: string; userId: string }> {
@@ -43,11 +52,27 @@ export async function handleSaveConfig(
   const { orgId, userId } = await requireAdminOrSocio();
   const parsed: SaveEvolutionConfigInput = saveEvolutionConfigSchema.parse(input);
 
+  let apiKey = parsed.apiKey;
+  let webhookSecret = parsed.webhookSecret;
+
+  // If secret fields empty, keep existing decrypted values
+  if (!apiKey || !webhookSecret) {
+    const existing = await getDecryptedEvolutionSecretsForOrg(orgId);
+    if (!apiKey) {
+      if (!existing) throw new Error("API Key obrigatória para nova configuração");
+      apiKey = existing.api_key;
+    }
+    if (!webhookSecret) {
+      if (!existing) throw new Error("Webhook Secret obrigatório para nova configuração");
+      webhookSecret = existing.webhook_secret;
+    }
+  }
+
   return upsertEvolutionConfig({
     org_id: orgId,
     instance_url: parsed.instanceUrl,
-    api_key: parsed.apiKey,
-    webhook_secret: parsed.webhookSecret,
+    api_key: apiKey,
+    webhook_secret: webhookSecret,
     enabled: parsed.enabled,
     created_by: userId,
   });
@@ -89,4 +114,18 @@ export async function handleGetConfig(): Promise<SanitizedEvolutionConfig | null
 export async function handleGetConfigRaw(): Promise<unknown> {
   const { orgId } = await requireAdminOrSocio();
   return getEvolutionConfigForOrg(orgId);
+}
+
+export async function handleGetMessageLogs(): Promise<MessageLogForUI[]> {
+  const { orgId } = await requireAdminOrSocio();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("evolution_message_logs")
+    .select("id, to_phone, message, status, error_message, created_at")
+    .eq("org_id", orgId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) throw new Error(`Falha ao buscar logs: ${error.message}`);
+  return (data ?? []) as MessageLogForUI[];
 }

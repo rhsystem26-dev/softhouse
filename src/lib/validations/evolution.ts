@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const saveEvolutionConfigSchema = z.object({
-  instanceUrl: z.string().url("URL da instancia invalida"),
-  apiKey: z.string().min(1, "API Key e obrigatoria"),
-  webhookSecret: z.string().min(1, "Webhook Secret e obrigatorio"),
+  instanceUrl: z.string().url("URL da instância inválida"),
+  apiKey: z.string().default(""),
+  webhookSecret: z.string().default(""),
   enabled: z.boolean(),
 });
 

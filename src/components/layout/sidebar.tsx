@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Command, LayoutDashboard, FolderKanban, Building2, DollarSign,
-  FileText, Cpu, Clock, CheckSquare, Server, Users, Menu,
+  FileText, Cpu, Clock, CheckSquare, Server, Users, Menu, Webhook,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarGroup } from "./sidebar-group";
@@ -47,6 +47,7 @@ const sidebarItems: { label: string; items: SidebarItem[] }[] = [
     label: "Sistema",
     items: [
       { label: "Usuários", href: "/app/admin/usuarios", icon: Users, roles: ["admin"] },
+      { label: "Evolution API", href: "/app/configuracoes/evolution", icon: Webhook, roles: ["admin", "socio"] },
     ],
   },
 ];
