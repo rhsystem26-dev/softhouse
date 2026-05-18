@@ -6,7 +6,7 @@ import {
   Command, LayoutDashboard, FolderKanban, Building2, DollarSign,
   FileText, Cpu, Clock, CheckSquare, Server, Users, Menu, Webhook,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { SidebarGroup } from "./sidebar-group";
 import { SidebarUserFooter } from "./sidebar-user-footer";
 import { useUser } from "@/hooks/use-user";
@@ -115,13 +115,16 @@ export function MobileSidebar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger>
-        <button className="lg:hidden p-2 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-          <Menu className="w-5 h-5" />
-        </button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-64 p-0 bg-slate-950 border-r border-slate-800/60">
+    <>
+      <button
+        className="lg:hidden p-2 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+        onClick={() => setOpen(true)}
+        aria-label="Abrir menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-64 p-0 bg-slate-950 border-r border-slate-800/60">
         <div className="flex flex-col h-full">
           <div className="h-14 flex items-center gap-3 px-4 border-b border-slate-800/60 shrink-0">
             <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
@@ -169,7 +172,8 @@ export function MobileSidebar() {
             />
           ) : null}
         </div>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
