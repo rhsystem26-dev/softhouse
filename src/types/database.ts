@@ -53,24 +53,42 @@ export interface Database {
         Row: {
           id: string;
           user_id: string;
-          full_name: string;
+          full_name: string | null;
+          email: string | null;
           avatar_url: string | null;
+          approval_status: "pending" | "approved" | "rejected";
+          approved_at: string | null;
+          approved_by: string | null;
+          rejected_at: string | null;
+          rejection_reason: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
-          full_name: string;
+          full_name?: string | null;
+          email?: string | null;
           avatar_url?: string | null;
+          approval_status?: "pending" | "approved" | "rejected";
+          approved_at?: string | null;
+          approved_by?: string | null;
+          rejected_at?: string | null;
+          rejection_reason?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
-          full_name?: string;
+          full_name?: string | null;
+          email?: string | null;
           avatar_url?: string | null;
+          approval_status?: "pending" | "approved" | "rejected";
+          approved_at?: string | null;
+          approved_by?: string | null;
+          rejected_at?: string | null;
+          rejection_reason?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -585,6 +603,7 @@ export interface Database {
     };
     Enums: {
       user_role: "admin" | "socio" | "financeiro" | "gerente" | "dev";
+      approval_status: "pending" | "approved" | "rejected";
       project_status: "active" | "completed" | "on_hold" | "cancelled";
       project_member_role: "gerente" | "dev";
       revenue_type: "servico" | "consultoria" | "produto" | "retainer" | "outro";

@@ -41,7 +41,7 @@ export default function CriarContaPage() {
       setError(
         error.message === "User already registered"
           ? "Este email já está cadastrado."
-          : error.message
+          : "Não foi possível criar sua conta agora. Verifique os dados e tente novamente."
       );
     } else {
       setSent(true);
@@ -58,10 +58,10 @@ export default function CriarContaPage() {
               <Mail className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-100">Confirme seu email</h2>
+              <h2 className="text-lg font-semibold text-slate-100">Cadastro recebido</h2>
               <p className="text-sm text-slate-400 mt-2">
                 Enviamos um link de confirmação para <strong className="text-slate-200">{email}</strong>.
-                Verifique sua caixa de entrada e clique no link para ativar sua conta.
+                Após confirmar o email, seu acesso estará aguardando aprovação de um administrador.
               </p>
             </div>
             <Link href="/login" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors block">

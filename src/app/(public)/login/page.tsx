@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,26 @@ import { PasswordInput } from "@/components/auth/password-input";
 import { Command, Lock, Zap } from "lucide-react";
 import Link from "next/link";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  acesso_negado: "Seu acesso foi negado. Entre em contato com um administrador.",
+  auth_callback_failed: "Falha na confirmação. Tente novamente.",
+};
+
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"password" | "magic">("password");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(urlError ? (ERROR_MESSAGES[urlError] ?? null) : null);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const supabase = createClient();
@@ -24,7 +39,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -32,10 +47,23 @@ export default function LoginPage() {
       setError(
         error.message === "Invalid login credentials"
           ? "Email ou senha inválidos."
-          : error.message
+          : "Não foi possível entrar. Verifique seus dados e tente novamente."
       );
-    } else {
-      router.push("/app/dashboard");
+    } else if (signInData.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("approval_status")
+        .eq("user_id", signInData.user.id)
+        .single();
+
+      if (profile?.approval_status === "pending") {
+        router.push("/aguardando-aprovacao");
+      } else if (profile?.approval_status === "rejected") {
+        await supabase.auth.signOut();
+        setError("Seu acesso foi negado. Entre em contato com um administrador.");
+      } else {
+        router.push("/app/dashboard");
+      }
     }
     setLoading(false);
   }
