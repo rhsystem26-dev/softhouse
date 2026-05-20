@@ -5,16 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectPopover, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createTimeEntryAction } from "@/lib/actions/time-entries";
+import { createInfraResourceAction } from "@/lib/actions/infra-resources";
 import { Plus } from "lucide-react";
 import type { Project } from "@/types/database";
 
-interface MemberInfo {
-  user_id: string;
-  profiles: { full_name: string }[] | null;
-}
-
-export function TempoDialog({ projects, members }: { projects: Pick<Project, "id" | "name">[]; members: MemberInfo[] }) {
+export function InfraDialog({ projects }: { projects: Pick<Project, "id" | "name">[] }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,7 +18,7 @@ export function TempoDialog({ projects, members }: { projects: Pick<Project, "id
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const result = await createTimeEntryAction(new FormData(e.currentTarget));
+    const result = await createInfraResourceAction(new FormData(e.currentTarget));
     if (result.error) { setError(result.error); setLoading(false); }
     else { setOpen(false); setLoading(false); }
   }
@@ -32,16 +27,14 @@ export function TempoDialog({ projects, members }: { projects: Pick<Project, "id
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <Button variant="outline" size="sm" className="gap-1.5">
-          <Plus className="w-3.5 h-3.5" /> Registrar
+          <Plus className="w-3.5 h-3.5" /> Adicionar
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Registrar Horas</DialogTitle>
-        </DialogHeader>
+        <DialogHeader><DialogTitle>Novo Recurso</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="t_project">Projeto</Label>
+            <Label htmlFor="i_project">Projeto</Label>
             <Select name="project_id">
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectPopover>
@@ -50,34 +43,42 @@ export function TempoDialog({ projects, members }: { projects: Pick<Project, "id
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="t_user">Colaborador</Label>
-            <Select name="user_id">
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
-              <SelectPopover>
-                {members.length === 0 ? <SelectItem value="" disabled>Nenhum colaborador</SelectItem> : members.map((m) => (
-                  <SelectItem key={m.user_id} value={m.user_id}>{m.profiles?.[0]?.full_name ?? m.user_id.slice(0, 8)}</SelectItem>
-                ))}
-              </SelectPopover>
-            </Select>
+            <Label htmlFor="i_name">Nome</Label>
+            <Input id="i_name" name="name" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="t_hours">Horas</Label>
-              <Input id="t_hours" name="hours" type="number" step="0.5" min="0.5" required />
+              <Label htmlFor="i_type">Tipo</Label>
+              <Select name="type" defaultValue="other">
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectPopover>
+                  <SelectItem value="server">Server</SelectItem>
+                  <SelectItem value="database">Database</SelectItem>
+                  <SelectItem value="storage">Storage</SelectItem>
+                  <SelectItem value="cdn">CDN</SelectItem>
+                  <SelectItem value="function">Function</SelectItem>
+                  <SelectItem value="queue">Queue</SelectItem>
+                  <SelectItem value="other">Outro</SelectItem>
+                </SelectPopover>
+              </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="t_date">Data</Label>
-              <Input id="t_date" name="date" type="date" required />
+              <Label htmlFor="i_provider">Provider</Label>
+              <Input id="i_provider" name="provider" placeholder="AWS, Vercel..." />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="t_description">Descrição</Label>
-            <Input id="t_description" name="description" />
+            <Label htmlFor="i_cost">Custo Mensal (R$)</Label>
+            <Input id="i_cost" name="cost_monthly" type="number" step="0.01" min="0" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="i_notes">Observacoes</Label>
+            <Input id="i_notes" name="notes" />
           </div>
           {error && <p className="text-sm text-rose-400">{error}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancelar</Button>
-            <Button type="submit" disabled={loading}>{loading ? "Salvando..." : "Registrar"}</Button>
+            <Button type="submit" disabled={loading}>{loading ? "Salvando..." : "Adicionar"}</Button>
           </div>
         </form>
       </DialogContent>

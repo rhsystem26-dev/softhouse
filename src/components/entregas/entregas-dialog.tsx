@@ -45,7 +45,7 @@ export function EntregasDialog({ projects, members }: { projects: Pick<Project, 
             <Select name="project_id">
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectPopover>
-                {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                {projects.length === 0 ? <SelectItem value="" disabled>Nenhum projeto cadastrado</SelectItem> : projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
               </SelectPopover>
             </Select>
           </div>
